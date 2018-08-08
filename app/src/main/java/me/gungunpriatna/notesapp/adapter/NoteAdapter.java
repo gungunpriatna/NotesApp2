@@ -11,16 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.LinkedList;
-
 import me.gungunpriatna.notesapp.CustomOnItemClickListener;
 import me.gungunpriatna.notesapp.FormAddUpdateActivity;
-import me.gungunpriatna.notesapp.entity.Note;
 import me.gungunpriatna.notesapp.R;
+import me.gungunpriatna.notesapp.entity.Note;
 
 import static me.gungunpriatna.notesapp.db.DatabaseContract.CONTENT_URI;
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
+
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewholder> {
     private Cursor listNotes;
     private Activity activity;
 
@@ -28,22 +27,18 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         this.activity = activity;
     }
 
-//    public Cursor getListNotes() {
-//        return listNotes;
-//    }
-
     public void setListNotes(Cursor listNotes) {
         this.listNotes = listNotes;
     }
 
     @Override
-    public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NoteViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_note, parent, false);
-        return new NoteViewHolder(view);
+        return new NoteViewholder(view);
     }
 
     @Override
-    public void onBindViewHolder(NoteViewHolder holder, int position) {
+    public void onBindViewHolder(NoteViewholder holder, int position) {
         final Note note = getItem(position);
         holder.tvTitle.setText(note.getTitle());
         holder.tvDate.setText(note.getDate());
@@ -52,8 +47,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             @Override
             public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(activity, FormAddUpdateActivity.class);
-                Uri uri = Uri.parse(CONTENT_URI+"/"+note.getId());
+
+                // Set intent dengan data uri row note by id
+                // content://me.gungunpriatna.notesapp/note/id
+                Uri uri = Uri.parse(CONTENT_URI + "/" + note.getId());
                 intent.setData(uri);
+                //intent.putExtra(FormAddUpdateActivity.EXTRA_POSITION, position);
+                //intent.putExtra(FormAddUpdateActivity.EXTRA_NOTE, note);
                 activity.startActivityForResult(intent, FormAddUpdateActivity.REQUEST_UPDATE);
             }
         }));
@@ -65,23 +65,23 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         return listNotes.getCount();
     }
 
-    private Note getItem(int position){
+    private Note getItem(int position) {
         if (!listNotes.moveToPosition(position)) {
             throw new IllegalStateException("Position invalid");
         }
         return new Note(listNotes);
     }
 
-    public class NoteViewHolder extends RecyclerView.ViewHolder{
+    class NoteViewholder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDescription, tvDate;
         CardView cvNote;
 
-        public NoteViewHolder(View itemView) {
+        NoteViewholder(View itemView) {
             super(itemView);
-            tvTitle = (TextView)itemView.findViewById(R.id.tv_item_title);
-            tvDescription = (TextView)itemView.findViewById(R.id.tv_item_description);
-            tvDate = (TextView)itemView.findViewById(R.id.tv_item_date);
-            cvNote = (CardView)itemView.findViewById(R.id.cv_item_note);
+            tvTitle = (TextView) itemView.findViewById(R.id.tv_item_title);
+            tvDescription = (TextView) itemView.findViewById(R.id.tv_item_description);
+            tvDate = (TextView) itemView.findViewById(R.id.tv_item_date);
+            cvNote = (CardView) itemView.findViewById(R.id.cv_item_note);
         }
     }
 }
